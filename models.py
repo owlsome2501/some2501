@@ -6,8 +6,7 @@ from django.db import models
 from django.conf import settings
 from django.utils import timezone
 
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
+logger = logging.getLogger('django')
 
 
 class artical_cache(models.Model):
@@ -45,9 +44,10 @@ class artical_cache(models.Model):
 
     @classmethod
     def build(cls):
+        logger.info('start build')
         last = cls.last_build_time
         now = timezone.now()
-        if last is None or last - timedelta(seconds=600) < now:
+        if last is None or last < now - timedelta(seconds=600):
             cls.last_build_time = now
             for art_name in os.listdir(settings.ARTICAL_ROOT):
                 art_path = os.path.join(settings.ARTICAL_ROOT, art_name)
@@ -59,7 +59,7 @@ class artical_cache(models.Model):
                     art_cache = cls.objects.get(file_name=art_name)
                     if art_cache.is_expired():
                         art_cache.update()
-                        logger.error(f'"{art_name}" updated')
+                        logger.info(f'"{art_name}" updated')
                 except cls.DoesNotExist:
                     artical = artical_cache.parse_md(art_path)
                     pub_time = datetime.fromtimestamp(
@@ -69,6 +69,6 @@ class artical_cache(models.Model):
                                     pub_time=pub_time,
                                     update_time=pub_time,
                                     content=artical['content'])
-                    logger.error(artical['content'])
-                    logger.error(f'"{art_name}" created')
+                    logger.debug(artical['content'])
+                    logger.info(f'"{art_name}" created')
                     art_cache.save()
