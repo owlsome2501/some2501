@@ -48,6 +48,7 @@ class artical_cache(models.Model):
         last = cls.last_build_time
         now = timezone.now()
         if last is None or last - timedelta(seconds=600) < now:
+            cls.last_build_time = now
             for art_name in os.listdir(settings.ARTICAL_ROOT):
                 art_path = os.path.join(settings.ARTICAL_ROOT, art_name)
                 logger.debug(f'"{art_path}" process')
