@@ -3,4 +3,7 @@ from . import views
 
 app_name = 'blog'
 
-urlpatterns = [path('', views.index.as_view(), name='index')]
+urlpatterns = [
+    path('', views.index, name='index'),
+    path('<str:file_name>/', views.artical, name='artical')
+]

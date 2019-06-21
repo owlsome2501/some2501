@@ -38,7 +38,7 @@ class artical_cache(models.Model):
         md = markdown.Markdown(extensions=md_ext)
         content = md.convert(md_str)
         logger.debug(content)
-        title = md.Meta.get('title', ('████████████████████'))[0]
+        title = md.Meta.get('title', ('████████████████████', ))[0]
         logger.debug(title)
         return {'title': title, 'content': content}
 

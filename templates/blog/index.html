@@ -1,7 +1,7 @@
 {% if latest_artical_list %}
     <ul>
     {% for artical in latest_artical_list %}
-    <li>{{ artical.title }}</a></li>
+    <li><a href="{% url 'blog:artical' artical.file_name|slice:":-3" %}">{{ artical.title }}</a></li>
     {% endfor %}
     </ul>
 {% else %}
