@@ -56,7 +56,7 @@ class artical_cache(models.Model):
                 art_path = os.path.join(settings.ARTICAL_ROOT, art_name)
                 logger.debug(f'"{art_path}" process')
                 if (not os.path.isfile(art_path)
-                        and not art_name.endwith('.md')):
+                        or not art_name.endwith('.md')):
                     continue
                 try:
                     art_cache = cls.objects.get(file_name=art_name)
