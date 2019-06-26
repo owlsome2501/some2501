@@ -18,6 +18,9 @@ class artical_cache(models.Model):
 
     last_build_time = None
 
+    def __str__(self):
+        return self.file_name
+
     def is_expired(self):
         p = os.path.join(settings.ARTICAL_ROOT, self.file_name)
         return datetime.fromtimestamp(os.path.getmtime(p)) > self.update_time

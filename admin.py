@@ -1,3 +1,4 @@
 from django.contrib import admin
+from .models import artical_cache
 
-# Register your models here.
+admin.site.register(artical_cache)
