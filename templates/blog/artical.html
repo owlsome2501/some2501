@@ -1,17 +1,23 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width">
-    <title>{{artical_cache.title}}</title>
-    <link rel="stylesheet" type="text/css" href="{% static 'blog/markdown.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'blog/highlight.css' %}">
-</head>
-<body>
-<h1>{{ artical_cache.title }}</h1>
-<p>{{ artical_cache.pub_time }}</p>
-<hr>
-<div class="markdown-body"> {{ artical_cache.content|safe}}</div>
-</body>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width">
+        <title>{{artical_cache.title}}</title>
+        <link rel="stylesheet" type="text/css" href="{% static 'blog/main.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'blog/markdown.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'blog/highlight.css' %}">
+    </head>
+    <body>
+        <div class="title">
+            <div class="text">
+                <h1>{{ artical_cache.title }}</h1>
+            </div>
+            <div class="pubtime">
+                <p>{{ artical_cache.pub_time }}</p>
+            </div>
+        </div>
+        <div class="markdown"> {{ artical_cache.content|safe}}</div>
+    </body>
 </html>
