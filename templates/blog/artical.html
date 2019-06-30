@@ -10,14 +10,16 @@
         <link rel="stylesheet" type="text/css" href="{% static 'blog/highlight.css' %}">
     </head>
     <body>
-        <div class="title">
-            <div class="text">
-                <h1>{{ artical_cache.title }}</h1>
+        <div class="artical">
+            <div class="title">
+                <div class="text">
+                    <h1>{{ artical_cache.title }}</h1>
+                </div>
+                <div class="pubtime">
+                    <p>{{ artical_cache.pub_time }}</p>
+                </div>
             </div>
-            <div class="pubtime">
-                <p>{{ artical_cache.pub_time }}</p>
-            </div>
+            <div class="markdown"> {{ artical_cache.content|safe}}</div>
         </div>
-        <div class="markdown"> {{ artical_cache.content|safe}}</div>
     </body>
 </html>

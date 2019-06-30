@@ -24,6 +24,10 @@ h1, h2, h3, h4, h5, h6 {
 .title_index_item p{
     color:#333;
 }
+.artical {
+    margin-left: 15%;
+    margin-right: 15%;
+}
 .title {
     font-family: sans-serif;
     font-size: 16px;
@@ -31,7 +35,8 @@ h1, h2, h3, h4, h5, h6 {
     line-height: 1.6;
     word-wrap: break-word;
     padding: 2% 5% 2% 5%;
-    margin: 5% 15% 10px 15%;
+    margin-bottom: 10px;
+    margin-top: 5%;
     background: #fff;
     border: 1px solid #ddd;
     border-radius: 0 0 3px 3px;
@@ -42,4 +47,15 @@ h1, h2, h3, h4, h5, h6 {
     font-weight: bold;
     line-height: 1.4;
     font-family: serif;
+}
+@media (max-width: 600px) {
+    .artical,
+    .artical_list {
+        margin: 2% 2% 2% 2%;
+        display: table-cell;
+        vertical-align: middle;
+        /* display: flex; */
+        /* align-items: center; */
+        /* justify-content: center; */
+    }
 }
