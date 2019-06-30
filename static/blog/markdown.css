@@ -11,15 +11,15 @@
   margin-bottom: 0;
 }
 .markdown-body {
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: sans-serif;
   font-size: 16px;
   color: #333;
   line-height: 1.6;
   word-wrap: break-word;
-  padding: 45px;
+  padding: 2% 5% 5% 5%;
+  margin: 5% 15% 5% 15%;
   background: #fff;
   border: 1px solid #ddd;
-  -webkit-border-radius: 0 0 3px 3px;
   border-radius: 0 0 3px 3px;
 }
 .markdown-body > *:first-child {
@@ -29,8 +29,6 @@
   margin-bottom: 0 !important;
 }
 .markdown-body * {
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
 .markdown-body h1,
@@ -43,16 +41,28 @@
   margin-bottom: 16px;
   font-weight: bold;
   line-height: 1.4;
+  font-family: serif;
 }
-.markdown-body p,
-.markdown-body blockquote,
 .markdown-body ul,
 .markdown-body ol,
 .markdown-body dl,
 .markdown-body table,
-.markdown-body pre {
+.markdown-body pre,
+.markdown-body ul p,
+.markdown-body ol p,
+.markdown-body dl p,
+.markdown-body table p,
+.markdown-body pre p {
   margin-top: 0;
   margin-bottom: 16px;
+  text-indent: 0;
+}
+.markdown-body blockquote,
+.markdown-body blockquote p,
+.markdown-body p {
+  margin-top: 0;
+  margin-bottom: 16px;
+  text-indent: 2em;
 }
 .markdown-body h1 {
   margin: 0.67em 0;
@@ -137,22 +147,18 @@
   overflow: auto;
   font-size: 85%;
   line-height: 1.45;
-  /* background-color: #f7f7f7; */
-  -webkit-border-radius: 3px;
   border-radius: 3px;
 }
 .markdown-body pre code {
-  display: inline;
   max-width: initial;
   padding: 0;
   margin: 0;
-  overflow: initial;
+  overflow: auto;
   font-size: 100%;
   line-height: inherit;
   word-wrap: normal;
   white-space: pre;
   border: 0;
-  -webkit-border-radius: 3px;
   border-radius: 3px;
   background-color: transparent;
 }
@@ -161,14 +167,13 @@
   content: normal;
 }
 .markdown-body code {
-  font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
+  font-family: monospace;
   padding: 0;
   padding-top: 0.2em;
   padding-bottom: 0.2em;
   margin: 0;
   font-size: 85%;
   background-color: rgba(0,0,0,0.04);
-  -webkit-border-radius: 3px;
   border-radius: 3px;
 }
 .markdown-body code:before,
@@ -184,10 +189,10 @@
 .markdown-body img {
   max-width: 100%;
   max-height: 100%;
-  -webkit-border-radius: 4px;
-  border-radius: 4px;
-  -webkit-box-shadow: 0 0 10px #555;
   box-shadow: 0 0 10px #555;
+  margin-left: auto;
+  margin-right:auto;
+  display:block;
 }
 .markdown-body strong {
   font-weight: bold;
