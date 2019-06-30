@@ -1,9 +1,26 @@
-{% if latest_artical_list %}
-    <ul>
-    {% for artical in latest_artical_list %}
-    <li><a href="{% url 'blog:artical' artical.file_name|slice:":-3" %}">{{ artical.title }}</a></li>
-    {% endfor %}
-    </ul>
-{% else %}
-    <p>No polls are available.</p>
-{% endif %}
+{% load static %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width">
+        <link rel="stylesheet" type="text/css" href="{% static 'blog/main.css' %}">
+        <title>{{artical_cache.title}}</title>
+    </head>
+    <body>
+        <div class="artical_list">
+            {% if latest_artical_list %}
+                {% for artical in latest_artical_list %}
+                <a class="title_index_item" href="{% url 'blog:artical' artical.file_name|slice:":-3" %}">
+                    <h1 class="text">
+                        {{ artical.title }}
+                    </h1>
+                    <p class="pub_time"> {{ artical.pub_time }} </p>
+                </a>
+                {% endfor %}
+            {% else %}
+                <p>No artical</p>
+            {% endif %}
+        </div>
+    </body>
+</html>
