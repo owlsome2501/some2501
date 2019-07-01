@@ -1,10 +1,9 @@
 import os
 import markdown
-from datetime import datetime, timedelta
+from datetime import datetime
 import logging
 from django.db import models
 from django.conf import settings
-from django.utils import timezone
 
 logger = logging.getLogger('django')
 
@@ -44,34 +43,3 @@ class artical_cache(models.Model):
         title = md.Meta.get('title', ('████████████████████', ))[0]
         logger.debug(title)
         return {'title': title, 'content': content}
-
-    @classmethod
-    def build(cls):
-        logger.info('start build')
-        last = cls.last_build_time
-        now = timezone.now()
-        if last is None or last < now - timedelta(seconds=600):
-            cls.last_build_time = now
-            for art_name in os.listdir(settings.ARTICAL_ROOT):
-                art_path = os.path.join(settings.ARTICAL_ROOT, art_name)
-                logger.debug(f'"{art_path}" process')
-                if (not os.path.isfile(art_path)
-                        or not art_name.endswith('.md')):
-                    continue
-                try:
-                    art_cache = cls.objects.get(file_name=art_name)
-                    if art_cache.is_expired():
-                        art_cache.update()
-                        logger.info(f'"{art_name}" updated')
-                except cls.DoesNotExist:
-                    artical = artical_cache.parse_md(art_path)
-                    pub_time = datetime.fromtimestamp(
-                        os.path.getmtime(art_path))
-                    art_cache = cls(file_name=art_name,
-                                    title=artical['title'],
-                                    pub_time=pub_time,
-                                    update_time=pub_time,
-                                    content=artical['content'])
-                    logger.debug(artical['content'])
-                    logger.info(f'"{art_name}" created')
-                    art_cache.save()
