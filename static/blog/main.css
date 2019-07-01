@@ -52,8 +52,8 @@ h1, h2, h3, h4, h5, h6 {
     .artical,
     .artical_list {
         margin: 2% 2% 2% 2%;
-        display: table-cell;
-        vertical-align: middle;
+        /* display: table-cell; */
+        /* vertical-align: middle; */
         /* display: flex; */
         /* align-items: center; */
         /* justify-content: center; */
