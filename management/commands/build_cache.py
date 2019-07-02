@@ -12,14 +12,14 @@ class Command(BaseCommand):
         logger.info('start build')
         for author_name in listdir(settings.ARTICAL_ROOT):
             try:
-                au = author.object.get(name=author_name)
+                logger.debug(f'"{author_name}" process')
+                au = author.objects.get(name=author_name)
                 if au.is_expired():
                     au.update()
                     logger.info(f'"{au.name}" updated')
             except author.DoesNotExist:
                 au = author.mk_author(author_name)
                 if au is not None:
-                    au.save()
                     logger.info(f'"{au.name}" created')
                 else:
                     continue
@@ -36,8 +36,8 @@ class Command(BaseCommand):
                         logger.info(f'"{art_name}" updated')
                 except artical.DoesNotExist:
                     art = artical.mk_artical(au, art_name)
-                    logger.info(f'"{art_name}" created')
-                    art.save()
+                    if art is not None:
+                        logger.info(f'"{art_name}" created')
 
     def handle(self, *args, **options):
         self.build()

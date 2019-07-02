@@ -5,13 +5,13 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width">
         <link rel="stylesheet" type="text/css" href="{% static 'blog/main.css' %}">
-        <title>{{artical_cache.title}}</title>
+        <title>文章列表</title>
     </head>
     <body>
         <div class="artical_list">
             {% if latest_artical_list %}
                 {% for artical in latest_artical_list %}
-                <a class="title_index_item" href="{% url 'blog:artical' artical.file_name|slice:":-3" %}">
+                <a class="title_index_item" href="{% url 'blog:artical' artical.author.name artical.file_name|slice:":-3" %}">
                     <h1 class="text">
                         {{ artical.title }}
                     </h1>

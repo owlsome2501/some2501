@@ -61,14 +61,15 @@ class md_cache(models.Model):
         ins = md_cache(content=content,
                        file_path=file_path,
                        update_time=update_time)
+        ins.save()
         return meta, ins
 
 
 class author(models.Model):
     name = models.CharField(max_length=30)
     mail = models.EmailField(null=True, blank=True)
-    nickname = models.CharField(max_length=30, null=True, black=True)
-    description = models.TextField()
+    nickname = models.CharField(max_length=30, null=True, blank=True)
+    description = models.ForeignKey(md_cache, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name
@@ -92,10 +93,12 @@ class author(models.Model):
         meta, description = md_cache.mk_md_cache(author_self)
         mail = meta.get('mail', (None, ))[0]
         nickname = meta.get('nickname', (None, ))[0]
-        return author(name=name,
-                      mail=mail,
-                      nickname=nickname,
-                      description=description)
+        au = author(name=name,
+                    mail=mail,
+                    nickname=nickname,
+                    description=description)
+        au.save()
+        return au
 
 
 class artical(models.Model):
@@ -119,12 +122,16 @@ class artical(models.Model):
 
     @staticmethod
     def mk_artical(author: author, file_name: str):
+        if file_name == author.name + '.md':
+            return None
         file_path = os.path.join(author.name, file_name)
         meta, content = md_cache.mk_md_cache(file_path)
         title = meta.get('title', ('████████████████████', ))[0]
         pub_time = meta.get('time', (content.update_time, ))[0]
-        return artical(file_name=file_name,
-                       title=title,
-                       pub_time=pub_time,
-                       content=content,
-                       author=author)
+        art = artical(file_name=file_name,
+                      title=title,
+                      pub_time=pub_time,
+                      content=content,
+                      author=author)
+        art.save()
+        return art

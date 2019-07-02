@@ -3,8 +3,9 @@ from .models import artical
 
 
 def index(request):
-    articals = artical.objects.all()[-5:]
-    return render(request, 'blog/index.html', {'latest_art_list': articals})
+    articals = artical.objects.all()
+    return render(request, 'blog/index.html',
+                  {'latest_artical_list': articals})
 
 
 def author_detail(request, author_name):

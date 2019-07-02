@@ -4,7 +4,7 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width">
-        <title>{{artical_cache.title}}</title>
+        <title>{{artical.title}}</title>
         <link rel="stylesheet" type="text/css" href="{% static 'blog/main.css' %}">
         <link rel="stylesheet" type="text/css" href="{% static 'blog/markdown.css' %}">
         <link rel="stylesheet" type="text/css" href="{% static 'blog/highlight.css' %}">
@@ -13,13 +13,17 @@
         <div class="artical">
             <div class="title">
                 <div class="text">
-                    <h1>{{ artical_cache.title }}</h1>
+                    <h1>{{ artical.title }}</h1>
                 </div>
                 <div class="pubtime">
-                    <p>{{ artical_cache.pub_time }}</p>
+                    <p>{{ artical.pub_time }}</p>
+                </div>
+                <!-- TODO: add nickname support -->
+                <div class="author">
+                    <p>{{ artical.author.name }}
                 </div>
             </div>
-            <div class="markdown"> {{ artical_cache.content|safe}}</div>
+            <div class="markdown"> {{ artical.content.content|safe}}</div>
         </div>
     </body>
 </html>
