@@ -1,4 +1,4 @@
 from django.contrib import admin
-from .models import artical_cache
+from .models import artical
 
-admin.site.register(artical_cache)
+admin.site.register(artical)

@@ -2,7 +2,7 @@ from os import listdir, path
 from datetime import datetime
 import logging
 from django.conf import settings
-from blog.models import artical_cache, author, parse_md
+from blog.models import artical, author, parse_md
 from django.core.management.base import BaseCommand
 
 logger = logging.getLogger('django')
@@ -26,7 +26,7 @@ class Command(BaseCommand):
                 logger.info(f'"{author_name}" created')
                 new_author.save()
 
-    def build_artical(self):
+    def build_art(self):
         logger.info('start build')
         for author_name in listdir(settings.ARTICAL_ROOT):
             author_home = path.join(settings.ARTICAL_ROOT, author_name)
@@ -36,22 +36,22 @@ class Command(BaseCommand):
                 if (not path.isfile(art_path) or not art_name.endswith('.md')):
                     continue
                 try:
-                    art_cache = artical_cache.objects.get(file_name=art_name)
+                    art_cache = artical.objects.get(file_name=art_name)
                     if art_cache.is_expired():
                         art_cache.update()
                         logger.info(f'"{art_name}" updated')
-                except artical_cache.DoesNotExist:
-                    artical = parse_md(art_path)
+                except artical.DoesNotExist:
+                    art = parse_md(art_path)
                     pub_time = datetime.fromtimestamp(path.getmtime(art_path))
-                    art_cache = artical_cache(file_name=art_name,
-                                              title=artical['title'],
+                    art_cache = artical(file_name=art_name,
+                                              title=art['title'],
                                               pub_time=pub_time,
                                               update_time=pub_time,
-                                              content=artical['content'])
-                    logger.debug(artical['content'])
+                                              content=art['content'])
+                    logger.debug(art['content'])
                     logger.info(f'"{art_name}" created')
                     art_cache.save()
 
     def handle(self, *args, **options):
         self.build_author()
-        self.build_artical()
+        self.build_art()
