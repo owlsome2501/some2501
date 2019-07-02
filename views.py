@@ -3,7 +3,6 @@ from .models import artical_cache
 
 
 def index(request):
-    artical_cache.build()
     acs = artical_cache.objects.all()
     return render(request, 'blog/index.html', {'latest_artical_list': acs})
 

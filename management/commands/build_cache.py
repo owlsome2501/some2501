@@ -9,7 +9,7 @@ logger = logging.getLogger('django')
 
 
 class Command(BaseCommand):
-    def handle(self, *args, **options):
+    def build(self):
         logger.info('start build')
         for art_name in os.listdir(settings.ARTICAL_ROOT):
             art_path = os.path.join(settings.ARTICAL_ROOT, art_name)
@@ -32,3 +32,6 @@ class Command(BaseCommand):
                 logger.debug(artical['content'])
                 logger.info(f'"{art_name}" created')
                 art_cache.save()
+
+    def handle(self, *args, **options):
+        self.build()
