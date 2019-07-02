@@ -7,7 +7,13 @@ def index(request):
     return render(request, 'blog/index.html', {'latest_artical_list': acs})
 
 
-def artical(request, file_name):
+def author(request, author):
+    pass
+
+
+def artical(request, author, file_name):
     artical_file_name = file_name + '.md'
-    ac = get_object_or_404(artical_cache, file_name=artical_file_name)
+    ac = get_object_or_404(artical_cache,
+                           author__name=author,
+                           file_name=artical_file_name)
     return render(request, 'blog/artical.html', {'artical_cache': ac})

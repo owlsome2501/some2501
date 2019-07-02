@@ -1,11 +1,21 @@
 import os
 import markdown
-from datetime import datetime
+from datetime import datetime, timezone
 import logging
 from django.db import models
 from django.conf import settings
 
 logger = logging.getLogger('django')
+
+
+class author(models.Model):
+    name = models.CharField(max_length=30)
+    mail = models.EmailField(null=True, blank=True)
+    nickname = models.CharField(max_length=30, null=True, black=True)
+    description = models.TextField()
+
+    def update(self):
+        pass
 
 
 class artical_cache(models.Model):
@@ -14,23 +24,30 @@ class artical_cache(models.Model):
     pub_time = models.DateTimeField()
     update_time = models.DateTimeField()
     content = models.TextField()
-
-    last_build_time = None
+    author = models.ForeignKey(author, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.file_name
+        return f'[{self.author}]{self.file_name}'
+
+    def update(self):
+        p = os.path.join(settings.ARTICAL_ROOT, self.author, self.file_name)
+        meta, artical = parse_md(p)
+        self.update_time = artical_cache.get_mtime(p)
+        self.title = meta.get('title', ('████████████████████', ))[0]
+        self.content = artical
+        self.save()
+
+
+class md_cache(models.Model):
+    content = models.TextField()
 
     def is_expired(self):
         p = os.path.join(settings.ARTICAL_ROOT, self.file_name)
-        return datetime.fromtimestamp(os.path.getmtime(p)) > self.update_time
+        return artical_cache.get_mtime(p) > self.update_time
 
-    def update(self):
-        p = os.path.join(settings.ARTICAL_ROOT, self.file_name)
-        artical = artical_cache.parse_md(p)
-        self.update_time = datetime.fromtimestamp(os.path.getmtime(p))
-        self.title = artical['title']
-        self.content = artical['content']
-        self.save()
+    @staticmethod
+    def get_mtime(p):
+        return datetime.fromtimestamp(os.path.getmtime(p), timezone.utc)
 
     @staticmethod
     def parse_md(md_file_path):
@@ -40,6 +57,13 @@ class artical_cache(models.Model):
         md = markdown.Markdown(extensions=md_ext)
         content = md.convert(md_str)
         logger.debug(content)
-        title = md.Meta.get('title', ('████████████████████', ))[0]
-        logger.debug(title)
-        return {'title': title, 'content': content}
+        # example output of md.Meta :
+        # {
+        #     'title' : ['My Document'],
+        #     'summary' : ['A brief description of my document.'],
+        #     'authors' : ['Waylan Limberg', 'John Doe'],
+        #     'date' : ['October 2, 2007'],
+        #     'blank-value' : [''],
+        #     'base_url' : ['http://example.com']
+        # }
+        return md.Meta, content
