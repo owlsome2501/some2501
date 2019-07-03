@@ -8,6 +8,13 @@ logger = logging.getLogger('django')
 
 
 class Command(BaseCommand):
+    def gc(self):
+        logger.info('start clean')
+        for au in author.objects.all():
+            au.gc()
+        for art in artical.objects.all():
+            art.gc()
+
     def build(self):
         logger.info('start build')
         for author_name in listdir(settings.ARTICAL_ROOT):
@@ -40,4 +47,5 @@ class Command(BaseCommand):
                         logger.info(f'"{art_name}" created')
 
     def handle(self, *args, **options):
+        self.gc()
         self.build()

@@ -88,6 +88,12 @@ class author(models.Model):
         self.nickname = meta.get('nickname', (None, ))[0]
         self.save()
 
+    def gc(self):
+        author_home = os.path.join(settings.ARTICAL_ROOT, self.name)
+        author_self_full = os.path.join(author_home, self.name + '.md')
+        if not os.path.isfile(author_self_full):
+            self.delete()
+
     # def delete(self, *args, **kwargs):
     #     self.description.delete()
     #     super().delete(*args, **kwargs)
@@ -129,6 +135,12 @@ class artical(models.Model):
         self.title = meta.get('title', ('████████████████████', ))[0]
         self.pub_time = meta.get('time', (self.content.update_time, ))[0]
         self.save()
+
+    def gc(self):
+        author_home = os.path.join(settings.ARTICAL_ROOT, self.author.name)
+        file_path = os.path.join(author_home, self.file_name)
+        if not os.path.isfile(file_path):
+            self.delete()
 
     # use signal instead
     # def delete(self, *args, **kwargs):
