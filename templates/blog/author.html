@@ -1,0 +1,49 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width">
+        <link rel="stylesheet" type="text/css" href="{% static 'blog/main.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'blog/markdown.css' %}">
+        <title>{{name}}</title>
+    </head>
+    <body>
+        <div class="me">
+            <div class="author_info">
+                <h1 class="name">
+                    {{name}}
+                </h1>
+                {% if info_list %}
+                    <ul>
+                    {% for info in info_list %}
+                        <li class="info">
+                            <span class="caption">{{info.caption}}</span>
+                            <span class="detail">{{info.detail}}</span>
+                        </li>
+                    {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+            <div class="markdown"> {{ description|safe}}</div>
+            <div class="artical_list">
+                {% if articals %}
+                    {% for artical in articals %}
+                    <a class="title_index_item" href="{% url 'blog:artical' artical.author.name artical.file_name|slice:":-3" %}">
+                        <h3 class="title">
+                            {{ artical.title }}
+                        </h3>
+                        <p class="pub_time"> {{ artical.pub_time }} </p>
+                    </a>
+                    {% endfor %}
+                {% else %}
+                    <a class="title_index_item">
+                        <h1 class="text">
+                            No artical
+                        </h1>
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </body>
+</html>

@@ -11,16 +11,24 @@
     </head>
     <body>
         <div class="artical">
-            <div class="title">
-                <div class="text">
+            <div class="title_bar">
+                <div class="title">
                     <h1>{{ artical.title }}</h1>
                 </div>
-                <div class="pubtime">
-                    <p>{{ artical.pub_time }}</p>
+                <div>
+                    <span class="pub_time">{{ artical.pub_time }}</span>
+                    {% if artical.content.update_time != artical.pub_time %}
+                    <span class="update_time">{{artical.content.update_time}} 更新</span>
+                    {% endif %}
                 </div>
-                <!-- TODO: add nickname support -->
-                <div class="author">
-                    <p>{{ artical.author.name }}
+                <div>
+                    <a class="author" href="{% url 'blog:author' artical.author.name %}">
+                    {% if artical.author.nickname is None %}
+                        {{ artical.author.name }}
+                    {% else %}
+                        {{ artical.author.nickname }}
+                    {% endif %}
+                    </a>
                 </div>
             </div>
             <div class="markdown"> {{ artical.content.content|safe}}</div>
