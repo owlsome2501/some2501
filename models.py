@@ -4,6 +4,8 @@ from datetime import datetime, timezone
 import logging
 from django.db import models
 from django.conf import settings
+from django.db.models.signals import post_delete
+from django.dispatch import receiver
 
 logger = logging.getLogger('django')
 
@@ -12,6 +14,9 @@ class md_cache(models.Model):
     content = models.TextField()
     update_time = models.DateTimeField()
     file_path = models.CharField(max_length=512)
+
+    def __str__(self):
+        return self.file_path
 
     def is_expired(self):
         p = os.path.join(settings.ARTICAL_ROOT, self.file_path)
@@ -69,7 +74,7 @@ class author(models.Model):
     name = models.CharField(max_length=30)
     mail = models.EmailField(null=True, blank=True)
     nickname = models.CharField(max_length=30, null=True, blank=True)
-    description = models.ForeignKey(md_cache, on_delete=models.CASCADE)
+    description = models.OneToOneField(md_cache, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name
@@ -83,13 +88,18 @@ class author(models.Model):
         self.nickname = meta.get('nickname', (None, ))[0]
         self.save()
 
+    # def delete(self, *args, **kwargs):
+    #     self.description.delete()
+    #     super().delete(*args, **kwargs)
+
     @staticmethod
     def mk_author(name: str):
         author_home = os.path.join(settings.ARTICAL_ROOT, name)
-        author_self = os.path.join(author_home, name + '.md')
-        if not os.path.isfile(author_self):
+        author_self = os.path.join(name, name + '.md')
+        author_self_full = os.path.join(author_home, name + '.md')
+        if not os.path.isfile(author_self_full):
             return None
-        logger.debug(f'"{author_home}" process')
+        logger.debug(f'"{name}" process')
         meta, description = md_cache.mk_md_cache(author_self)
         mail = meta.get('mail', (None, ))[0]
         nickname = meta.get('nickname', (None, ))[0]
@@ -105,7 +115,7 @@ class artical(models.Model):
     file_name = models.CharField(max_length=256)
     title = models.CharField(max_length=256)
     pub_time = models.DateTimeField()
-    content = models.ForeignKey(md_cache, on_delete=models.CASCADE)
+    content = models.OneToOneField(md_cache, on_delete=models.CASCADE)
     author = models.ForeignKey(author, on_delete=models.CASCADE)
 
     def __str__(self):
@@ -119,6 +129,12 @@ class artical(models.Model):
         self.title = meta.get('title', ('████████████████████', ))[0]
         self.pub_time = meta.get('time', (self.content.update_time, ))[0]
         self.save()
+
+    # use signal instead
+    # def delete(self, *args, **kwargs):
+    #     self.content.delete()
+    #     logger.info(f'"{self.content}" deleted')
+    #     super().delete(*args, **kwargs)
 
     @staticmethod
     def mk_artical(author: author, file_name: str):
@@ -135,3 +151,16 @@ class artical(models.Model):
                       author=author)
         art.save()
         return art
+
+
+# https://stackoverflow.com/a/33205503
+
+
+@receiver(post_delete, sender=author)
+def auto_delete_md_cache_with_author(sender, instance, **kwargs):
+    instance.description.delete()
+
+
+@receiver(post_delete, sender=artical)
+def auto_delete_md_cache_with_artical(sender, instance, **kwargs):
+    instance.content.delete()
