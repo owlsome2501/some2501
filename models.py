@@ -142,6 +142,9 @@ class artical(models.Model):
         if not os.path.isfile(file_path):
             self.delete()
 
+    class Meta:
+        ordering = ['-pub_time']
+
     # use signal instead
     # def delete(self, *args, **kwargs):
     #     self.content.delete()
