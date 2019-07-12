@@ -205,3 +205,8 @@
 .markdown del {
     text-decoration: line-through;
 }
+@media (max-width: 600px) {
+    .markdown img {
+        max-width: 100%;
+    }
+}
