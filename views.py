@@ -8,6 +8,11 @@ def index(request):
                   {'latest_article_list': articles})
 
 
+def author_index(request):
+    authors = author.objects.all()
+    return render(request, 'blog/author_index.html', {'author_list': authors})
+
+
 def author_detail(request, author_name):
     au = get_object_or_404(author, name=author_name)
     articles = article.objects.filter(author=au)

@@ -1,0 +1,27 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+    <head>
+        {% include 'blog/head.html' %}
+        <link rel="stylesheet" type="text/css" href="{% static 'blog/main.css' %}">
+        <title>AUTHORS</title>
+    </head>
+    <body>
+        {% include 'blog/top_nav.html' %}
+        <div class="author_list">
+            {% if author_list %}
+                {% for author in author_list %}
+                <a class="author_list_item" href="{% url 'blog:author' author.name %}">
+                    <h1 class="name">
+                        {% if author.nickname is None %}
+                            {{ author.name }}
+                        {% else %}
+                            {{ author.nickname }}
+                        {% endif %}
+                    </h1>
+                </a>
+                {% endfor %}
+            {% endif %}
+        </div>
+    </body>
+</html>
