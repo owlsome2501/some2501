@@ -3,34 +3,34 @@
 <html>
     <head>
         {% include 'blog/head.html' %}
-        <title>{{artical.title}}</title>
+        <title>{{article.title}}</title>
         <link rel="stylesheet" type="text/css" href="{% static 'blog/main.css' %}">
         <link rel="stylesheet" type="text/css" href="{% static 'blog/markdown.css' %}">
         <link rel="stylesheet" type="text/css" href="{% static 'blog/highlight.css' %}">
     </head>
     <body>
-        <div class="artical">
+        <div class="article">
             <div class="title_bar">
                 <div class="title">
-                    <h1>{{ artical.title }}</h1>
+                    <h1>{{ article.title }}</h1>
                 </div>
                 <div>
-                    <span class="pub_time">{{ artical.pub_time }}</span>
-                    {% if artical.content.update_time != artical.pub_time %}
-                    <span class="update_time">{{artical.content.update_time}} 更新</span>
+                    <span class="pub_time">{{ article.pub_time }}</span>
+                    {% if article.content.update_time != article.pub_time %}
+                    <span class="update_time">{{article.content.update_time}} 更新</span>
                     {% endif %}
                 </div>
                 <div>
-                    <a class="author" href="{% url 'blog:author' artical.author.name %}">
-                    {% if artical.author.nickname is None %}
-                        {{ artical.author.name }}
+                    <a class="author" href="{% url 'blog:author' article.author.name %}">
+                    {% if article.author.nickname is None %}
+                        {{ article.author.name }}
                     {% else %}
-                        {{ artical.author.nickname }}
+                        {{ article.author.nickname }}
                     {% endif %}
                     </a>
                 </div>
             </div>
-            <div class="markdown"> {{ artical.content.content|safe}}</div>
+            <div class="markdown"> {{ article.content.content|safe}}</div>
         </div>
     </body>
 </html>

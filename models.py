@@ -19,11 +19,11 @@ class md_cache(models.Model):
         return self.file_path
 
     def is_expired(self):
-        p = os.path.join(settings.ARTICAL_ROOT, self.file_path)
+        p = os.path.join(settings.ARTICLE_ROOT, self.file_path)
         return md_cache.get_mtime(p) > self.update_time
 
     def update(self):
-        p = os.path.join(settings.ARTICAL_ROOT, self.file_path)
+        p = os.path.join(settings.ARTICLE_ROOT, self.file_path)
         meta, content = md_cache.parse_md(p)
         self.content = content
         self.update_time = md_cache.get_mtime(p)
@@ -60,7 +60,7 @@ class md_cache(models.Model):
         parse markdown file and creat md_cache
         '''
         # load markdown file with relative path
-        p = os.path.join(settings.ARTICAL_ROOT, file_path)
+        p = os.path.join(settings.ARTICLE_ROOT, file_path)
         meta, content = md_cache.parse_md(p)
         update_time = md_cache.get_mtime(p)
         ins = md_cache(content=content,
@@ -89,7 +89,7 @@ class author(models.Model):
         self.save()
 
     def gc(self):
-        author_home = os.path.join(settings.ARTICAL_ROOT, self.name)
+        author_home = os.path.join(settings.ARTICLE_ROOT, self.name)
         author_self_full = os.path.join(author_home, self.name + '.md')
         if not os.path.isfile(author_self_full):
             self.delete()
@@ -100,7 +100,7 @@ class author(models.Model):
 
     @staticmethod
     def mk_author(name: str):
-        author_home = os.path.join(settings.ARTICAL_ROOT, name)
+        author_home = os.path.join(settings.ARTICLE_ROOT, name)
         author_self = os.path.join(name, name + '.md')
         author_self_full = os.path.join(author_home, name + '.md')
         if not os.path.isfile(author_self_full):
@@ -117,7 +117,7 @@ class author(models.Model):
         return au
 
 
-class artical(models.Model):
+class article(models.Model):
     file_name = models.CharField(max_length=256)
     title = models.CharField(max_length=256)
     pub_time = models.DateTimeField()
@@ -137,7 +137,7 @@ class artical(models.Model):
         self.save()
 
     def gc(self):
-        author_home = os.path.join(settings.ARTICAL_ROOT, self.author.name)
+        author_home = os.path.join(settings.ARTICLE_ROOT, self.author.name)
         file_path = os.path.join(author_home, self.file_name)
         if not os.path.isfile(file_path):
             self.delete()
@@ -152,14 +152,14 @@ class artical(models.Model):
     #     super().delete(*args, **kwargs)
 
     @staticmethod
-    def mk_artical(author: author, file_name: str):
+    def mk_article(author: author, file_name: str):
         if file_name == author.name + '.md':
             return None
         file_path = os.path.join(author.name, file_name)
         meta, content = md_cache.mk_md_cache(file_path)
         title = meta.get('title', ('████████████████████', ))[0]
         pub_time = meta.get('time', (content.update_time, ))[0]
-        art = artical(file_name=file_name,
+        art = article(file_name=file_name,
                       title=title,
                       pub_time=pub_time,
                       content=content,
@@ -176,6 +176,6 @@ def auto_delete_md_cache_with_author(sender, instance, **kwargs):
     instance.description.delete()
 
 
-@receiver(post_delete, sender=artical)
-def auto_delete_md_cache_with_artical(sender, instance, **kwargs):
+@receiver(post_delete, sender=article)
+def auto_delete_md_cache_with_article(sender, instance, **kwargs):
     instance.content.delete()

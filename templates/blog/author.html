@@ -25,20 +25,20 @@
                 {% endif %}
             </div>
             <div class="markdown"> {{ description|safe}}</div>
-            <div class="artical_list">
-                {% if articals %}
-                    {% for artical in articals %}
-                    <a class="title_index_item" href="{% url 'blog:artical' artical.author.name artical.file_name|slice:":-3" %}">
+            <div class="article_list">
+                {% if articles %}
+                    {% for article in articles %}
+                    <a class="title_index_item" href="{% url 'blog:article' article.author.name article.file_name|slice:":-3" %}">
                         <h3 class="title">
-                            {{ artical.title }}
+                            {{ article.title }}
                         </h3>
-                        <p class="pub_time"> {{ artical.pub_time }} </p>
+                        <p class="pub_time"> {{ article.pub_time }} </p>
                     </a>
                     {% endfor %}
                 {% else %}
                     <a class="title_index_item">
                         <h1 class="text">
-                            No artical
+                            No article
                         </h1>
                     </a>
                 {% endif %}
