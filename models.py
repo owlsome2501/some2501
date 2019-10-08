@@ -12,6 +12,7 @@ logger = logging.getLogger('django')
 
 class md_cache(models.Model):
     content = models.TextField()
+    raw_content = models.TextField()
     update_time = models.DateTimeField()
     file_path = models.CharField(max_length=512)
 
@@ -24,8 +25,9 @@ class md_cache(models.Model):
 
     def update(self):
         p = os.path.join(settings.ARTICLE_ROOT, self.file_path)
-        meta, content = md_cache.parse_md(p)
+        meta, content, raw_content = md_cache.parse_md(p)
         self.content = content
+        self.raw_content = raw_content
         self.update_time = md_cache.get_mtime(p)
         self.save()
         return meta
@@ -53,7 +55,7 @@ class md_cache(models.Model):
         #     'blank-value' : [''],
         #     'base_url' : ['http://example.com']
         # }
-        return md.Meta, content
+        return md.Meta, content, md_str
 
     def mk_md_cache(file_path):
         '''
@@ -61,9 +63,10 @@ class md_cache(models.Model):
         '''
         # load markdown file with relative path
         p = os.path.join(settings.ARTICLE_ROOT, file_path)
-        meta, content = md_cache.parse_md(p)
+        meta, content, raw_content = md_cache.parse_md(p)
         update_time = md_cache.get_mtime(p)
         ins = md_cache(content=content,
+                       raw_content=raw_content,
                        file_path=file_path,
                        update_time=update_time)
         ins.save()
@@ -132,7 +135,7 @@ class article(models.Model):
 
     def update(self):
         meta = self.content.update()
-        self.title = meta.get('title', ('████████████████████', ))[0]
+        self.title = meta.get('title', (self.file_name, ))[0]
         self.pub_time = meta.get('time', (self.content.update_time, ))[0]
         self.save()
 
@@ -157,7 +160,7 @@ class article(models.Model):
             return None
         file_path = os.path.join(author.name, file_name)
         meta, content = md_cache.mk_md_cache(file_path)
-        title = meta.get('title', ('████████████████████', ))[0]
+        title = meta.get('title', (file_name, ))[0]
         pub_time = meta.get('time', (content.update_time, ))[0]
         art = article(file_name=file_name,
                       title=title,
