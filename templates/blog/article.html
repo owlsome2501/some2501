@@ -31,6 +31,14 @@
                     </a>
                 </div>
             </div>
+            <div class="tags">
+                <span class="tag_title">Tags</span>
+                {% for tag in article.tags.all %}
+                <a class="tag" href="#">
+                    {{tag}}
+                </a>
+                {% endfor %}
+            </div>
             <div class="markdown"> {{ article.content.content|safe}}</div>
         </div>
     </body>
