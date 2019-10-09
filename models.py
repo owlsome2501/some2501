@@ -131,6 +131,10 @@ class tag(models.Model):
     def __str__(self):
         return self.text
 
+    def gc(self):
+        if self.article_set.count() == 0:
+            self.delete()
+
 
 class article(models.Model):
     file_name = models.CharField(max_length=256)

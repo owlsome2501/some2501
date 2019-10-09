@@ -1,7 +1,7 @@
 from os import listdir, path
 import logging
 from django.conf import settings
-from blog.models import article, author
+from blog.models import article, author, tag
 from django.core.management.base import BaseCommand
 
 logger = logging.getLogger('django')
@@ -14,6 +14,9 @@ class Command(BaseCommand):
             au.gc()
         for art in article.objects.all():
             art.gc()
+        # tag gc must after article
+        for t in tag.objects.all():
+            t.gc()
 
     def build(self):
         logger.info('start build')
