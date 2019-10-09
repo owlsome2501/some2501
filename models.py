@@ -1,4 +1,5 @@
 import os
+import re
 import markdown
 from datetime import datetime, timezone
 import logging
@@ -6,8 +7,12 @@ from django.db import models
 from django.conf import settings
 from django.db.models.signals import post_delete
 from django.dispatch import receiver
+from jieba import analyse
 
 logger = logging.getLogger('django')
+
+stop_words_path = os.path.join(settings.RESOURCE_ROOT, 'stop_words.txt')
+analyse.set_stop_words(stop_words_path)
 
 
 class md_cache(models.Model):
@@ -120,12 +125,20 @@ class author(models.Model):
         return au
 
 
+class tag(models.Model):
+    text = models.TextField(primary_key=True)
+
+    def __str__(self):
+        return self.text
+
+
 class article(models.Model):
     file_name = models.CharField(max_length=256)
     title = models.CharField(max_length=256)
     pub_time = models.DateTimeField()
     content = models.OneToOneField(md_cache, on_delete=models.CASCADE)
     author = models.ForeignKey(author, on_delete=models.CASCADE)
+    tags = models.ManyToManyField(tag)
 
     def __str__(self):
         return f'[{self.author}]{self.file_name}'
@@ -137,7 +150,9 @@ class article(models.Model):
         meta = self.content.update()
         self.title = meta.get('title', (self.file_name, ))[0]
         self.pub_time = meta.get('time', (self.content.update_time, ))[0]
+
         self.save()
+        self.parse_tag()
 
     def gc(self):
         author_home = os.path.join(settings.ARTICLE_ROOT, self.author.name)
@@ -154,6 +169,20 @@ class article(models.Model):
     #     logger.info(f'"{self.content}" deleted')
     #     super().delete(*args, **kwargs)
 
+    def parse_tag(self):
+        normalized_raw_content = self.content.raw_content.lower()
+        pattern_to_delete = r'```[^`]*```'
+        clean_raw_conten = re.sub(pattern_to_delete, '',
+                                  normalized_raw_content)
+        tags = analyse.extract_tags(clean_raw_conten,
+                                    topK=5,
+                                    allowPOS=('n', 'eng'))
+        self.tags.clear()
+        for t in tags:
+            t = tag(t)
+            t.save()
+            self.tags.add(t)
+
     @staticmethod
     def mk_article(author: author, file_name: str):
         if file_name == author.name + '.md':
@@ -168,6 +197,8 @@ class article(models.Model):
                       content=content,
                       author=author)
         art.save()
+        # add tag after save
+        art.parse_tag()
         return art
 
 
