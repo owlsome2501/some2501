@@ -4,12 +4,12 @@ from django.conf import settings
 from blog.models import article, author, tag
 from django.core.management.base import BaseCommand
 
-logger = logging.getLogger('django')
+logger = logging.getLogger("django")
 
 
 class Command(BaseCommand):
     def gc(self):
-        logger.info('start clean')
+        logger.info("start clean")
         for au in author.objects.all():
             au.gc()
         for art in article.objects.all():
@@ -19,7 +19,7 @@ class Command(BaseCommand):
             t.gc()
 
     def build(self):
-        logger.info('start build')
+        logger.info("start build")
         for author_name in listdir(settings.ARTICLE_ROOT):
             try:
                 logger.debug(f'"{author_name}" process')
@@ -37,7 +37,7 @@ class Command(BaseCommand):
             for art_name in listdir(author_home):
                 art_path = path.join(author_home, art_name)
                 logger.debug(f'"{art_path}" process')
-                if (not path.isfile(art_path) or not art_name.endswith('.md')):
+                if not path.isfile(art_path) or not art_name.endswith(".md"):
                     continue
                 try:
                     art = article.objects.get(author=au, file_name=art_name)

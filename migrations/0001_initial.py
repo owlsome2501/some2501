@@ -7,19 +7,26 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='artical_cache',
+            name="artical_cache",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('file_name', models.CharField(max_length=256)),
-                ('title', models.CharField(max_length=256)),
-                ('pub_time', models.DateTimeField()),
-                ('update_time', models.DateTimeField()),
-                ('content', models.TextField()),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("file_name", models.CharField(max_length=256)),
+                ("title", models.CharField(max_length=256)),
+                ("pub_time", models.DateTimeField()),
+                ("update_time", models.DateTimeField()),
+                ("content", models.TextField()),
             ],
         ),
     ]

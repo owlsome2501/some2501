@@ -9,9 +9,9 @@ from django.db.models.signals import post_delete
 from django.dispatch import receiver
 from jieba import analyse
 
-logger = logging.getLogger('django')
+logger = logging.getLogger("django")
 
-stop_words_path = os.path.join(settings.RESOURCE_ROOT, 'stop_words.txt')
+stop_words_path = os.path.join(settings.RESOURCE_ROOT, "stop_words.txt")
 analyse.set_stop_words(stop_words_path)
 
 
@@ -47,7 +47,7 @@ class md_cache(models.Model):
             md_str = md_file.read()
 
         # use pyhton-markdown
-        md_ext = ['extra', 'codehilite', 'meta']
+        md_ext = ["extra", "codehilite", "meta"]
         md = markdown.Markdown(extensions=md_ext)
         content = md.convert(md_str)
         logger.debug(content)
@@ -63,17 +63,19 @@ class md_cache(models.Model):
         return md.Meta, content, md_str
 
     def mk_md_cache(file_path):
-        '''
+        """
         parse markdown file and creat md_cache
-        '''
+        """
         # load markdown file with relative path
         p = os.path.join(settings.ARTICLE_ROOT, file_path)
         meta, content, raw_content = md_cache.parse_md(p)
         update_time = md_cache.get_mtime(p)
-        ins = md_cache(content=content,
-                       raw_content=raw_content,
-                       file_path=file_path,
-                       update_time=update_time)
+        ins = md_cache(
+            content=content,
+            raw_content=raw_content,
+            file_path=file_path,
+            update_time=update_time,
+        )
         ins.save()
         return meta, ins
 
@@ -92,13 +94,13 @@ class author(models.Model):
 
     def update(self):
         meta = self.description.update()
-        self.mail = meta.get('mail', (None, ))[0]
-        self.nickname = meta.get('nickname', (None, ))[0]
+        self.mail = meta.get("mail", (None,))[0]
+        self.nickname = meta.get("nickname", (None,))[0]
         self.save()
 
     def gc(self):
         author_home = os.path.join(settings.ARTICLE_ROOT, self.name)
-        author_self_full = os.path.join(author_home, self.name + '.md')
+        author_self_full = os.path.join(author_home, self.name + ".md")
         if not os.path.isfile(author_self_full):
             self.delete()
 
@@ -109,18 +111,15 @@ class author(models.Model):
     @staticmethod
     def mk_author(name: str):
         author_home = os.path.join(settings.ARTICLE_ROOT, name)
-        author_self = os.path.join(name, name + '.md')
-        author_self_full = os.path.join(author_home, name + '.md')
+        author_self = os.path.join(name, name + ".md")
+        author_self_full = os.path.join(author_home, name + ".md")
         if not os.path.isfile(author_self_full):
             return None
         logger.debug(f'"{name}" process')
         meta, description = md_cache.mk_md_cache(author_self)
-        mail = meta.get('mail', (None, ))[0]
-        nickname = meta.get('nickname', (None, ))[0]
-        au = author(name=name,
-                    mail=mail,
-                    nickname=nickname,
-                    description=description)
+        mail = meta.get("mail", (None,))[0]
+        nickname = meta.get("nickname", (None,))[0]
+        au = author(name=name, mail=mail, nickname=nickname, description=description)
         au.save()
         return au
 
@@ -145,15 +144,15 @@ class article(models.Model):
     tags = models.ManyToManyField(tag)
 
     def __str__(self):
-        return f'[{self.author}]{self.file_name}'
+        return f"[{self.author}]{self.file_name}"
 
     def is_expired(self):
         return self.content.is_expired()
 
     def update(self):
         meta = self.content.update()
-        self.title = meta.get('title', (self.file_name, ))[0]
-        self.pub_time = meta.get('time', (self.content.update_time, ))[0]
+        self.title = meta.get("title", (self.file_name,))[0]
+        self.pub_time = meta.get("time", (self.content.update_time,))[0]
 
         self.save()
         self.parse_tag()
@@ -165,7 +164,7 @@ class article(models.Model):
             self.delete()
 
     class Meta:
-        ordering = ['-pub_time']
+        ordering = ["-pub_time"]
 
     # use signal instead
     # def delete(self, *args, **kwargs):
@@ -175,12 +174,9 @@ class article(models.Model):
 
     def parse_tag(self):
         normalized_raw_content = self.content.raw_content.lower()
-        pattern_to_delete = r'```[^`]*```'
-        clean_raw_conten = re.sub(pattern_to_delete, '',
-                                  normalized_raw_content)
-        tags = analyse.extract_tags(clean_raw_conten,
-                                    topK=5,
-                                    allowPOS=('n', 'eng'))
+        pattern_to_delete = r"```[^`]*```"
+        clean_raw_conten = re.sub(pattern_to_delete, "", normalized_raw_content)
+        tags = analyse.extract_tags(clean_raw_conten, topK=5, allowPOS=("n", "eng"))
         self.tags.clear()
         for t in tags:
             t = tag(t)
@@ -189,17 +185,19 @@ class article(models.Model):
 
     @staticmethod
     def mk_article(author: author, file_name: str):
-        if file_name == author.name + '.md':
+        if file_name == author.name + ".md":
             return None
         file_path = os.path.join(author.name, file_name)
         meta, content = md_cache.mk_md_cache(file_path)
-        title = meta.get('title', (file_name, ))[0]
-        pub_time = meta.get('time', (content.update_time, ))[0]
-        art = article(file_name=file_name,
-                      title=title,
-                      pub_time=pub_time,
-                      content=content,
-                      author=author)
+        title = meta.get("title", (file_name,))[0]
+        pub_time = meta.get("time", (content.update_time,))[0]
+        art = article(
+            file_name=file_name,
+            title=title,
+            pub_time=pub_time,
+            content=content,
+            author=author,
+        )
         art.save()
         # add tag after save
         art.parse_tag()
