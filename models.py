@@ -176,7 +176,7 @@ class article(models.Model):
         normalized_raw_content = self.content.raw_content.lower()
         pattern_to_delete = r"```[^`]*```"
         clean_raw_conten = re.sub(pattern_to_delete, "", normalized_raw_content)
-        tags = analyse.extract_tags(clean_raw_conten, topK=5, allowPOS=("n", "eng"))
+        tags = analyse.extract_tags(clean_raw_conten, topK=3, allowPOS=("n", "eng"))
         self.tags.clear()
         for t in tags:
             t = tag(t)
