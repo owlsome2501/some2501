@@ -13,7 +13,7 @@
                 {% for article in latest_article_list %}
                 <a class="title_index_item" href="{% url 'blog:article' article.author.name article.file_name|slice:":-3" %}">
                     <h1 class="title">
-                        {{ article.title }}
+                        {{ article.title|safe }}
                     </h1>
                     <p>
                     <span class="author">

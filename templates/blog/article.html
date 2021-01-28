@@ -13,7 +13,7 @@
         <div class="article">
             <div class="title_bar">
                 <div class="title">
-                    <h1>{{ article.title }}</h1>
+                    <h1>{{ article.title|safe }}</h1>
                 </div>
                 <div>
                     <span class="pub_time">{{ article.pub_time }}</span>
