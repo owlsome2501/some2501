@@ -1,0 +1,37 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+    <head>
+        {% include 'blog/head.html' %}
+        <link rel="stylesheet" type="text/css" href="{% static 'blog/main.css' %}">
+        <title>some2501</title>
+    </head>
+    <body>
+        {% include 'blog/top_nav.html' %}
+        <div class="article_list">
+            {% for result in page.object_list %}
+            <a class="title_index_item" href="{% url 'blog:article' result.object.author.name result.object.file_name|slice:":-3" %}">
+                <h1 class="title">
+                    {{ result.object.title|safe }}
+                </h1>
+                <p>
+                    <span class="author">
+                    {% if result.object.author.nickname is None %}
+                        {{ result.object.author.name }}
+                    {% else %}
+                        {{ result.object.author.nickname }}
+                    {% endif %}
+                    </span>
+                    <span class="pub_time"> {{ result.object.pub_time }} </span>
+                </p>
+            </a>
+            {% empty %}
+            <a class="title_index_item">
+                <h1 class="title">
+                    No article
+                </h1>
+            </a>
+            {% endfor %}
+        </div>
+    </body>
+</html>

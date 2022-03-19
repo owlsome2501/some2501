@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, include
 from . import views
 
 app_name = "blog"
@@ -12,4 +12,5 @@ urlpatterns = [
         views.article_detail,
         name="article",
     ),
+    path("search/", include('haystack.urls')),
 ]

@@ -2,4 +2,7 @@
 <div class="top_nav">
     <a href="{% url 'blog:index' %}">HOME</a>
     <a href="{% url 'blog:author_index' %}">AUTHORS</a>
+    <form role="search" method="get" id="searchform" action="{% url 'blog:haystack_search' %}">
+        <input type="search" name="q" size="12" placeholder="搜索" required>
+    </form>
 </div>
